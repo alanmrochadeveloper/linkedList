@@ -23,7 +23,23 @@ export default class LinkedList {
     }
 
     insert(element, position) {
-
+        if (position >= 0 && position < this.size()) {
+            const node = new Node(element);
+            if (position === 0) {
+                let temp = this.head;
+                this.head = node;
+                this.head.next = temp;
+            } else {
+                let prev = this.getElementAt(position - 1);
+                let current = this.getElementAt(position);
+                let temp = current;
+                prev.next = node;
+                node.next = temp;
+            }
+            this.count++;
+            return true;
+        }
+        return false;
     }
 
     getElementAt(index) {
@@ -40,62 +56,60 @@ export default class LinkedList {
         }
     }
 
-    remove(element) {
+    getElementAtV2(index) {
+        if (index >= 0 && index <= this.count) { // {1}
+            let node = this.head; // {2}
+            for (let i = 0; i < index && node != null; i++) { // {3}
+                node = node.next;
+            }
+            return node; // {4}
+        }
+        return undefined; // {5}
+    }
 
+    remove(element) {
+        const index = this.indexOf(element);
+        return this.removeAt(index);
     }
 
     removeAt(index) {
-        console.log('inside remove at, index = ', index);
-        if (this.isEmpty()) {
-            return undefined;
-        }
-        if (this.size() === 1) {
-            this.head = null;
-            this.count = 0;
-        } else if (index + 1 > this.size()) {
-            return undefined;
-        } else if (index === 0) {
-            this.head = this.head.next;
-        } else {
-            let currentNode = this.head;
-            let counter = 0;
-            let prevNode = this.head;
-            while (currentNode != null) {
-                console.log({ counter });
-                if (counter === index) {
-                    const deletedNode = currentNode;
-                    prevNode.next = currentNode?.next;
-                    this.count--;
-                    return deletedNode;
-                }
-                prevNode = currentNode;
-                currentNode = currentNode.next;
-                counter++;
-            }
-        }
-    }
-
-    removeAtV2(index) {
-        if (index >= 0 && index < this.count) {
-            let current = this.head;
-            if (index === 0) {
+        if (index >= 0 && index < this.count) { // {1}
+            let current = this.head; // {2}
+            if (index === 0) { // {3}
                 this.head = current.next;
             } else {
-                let previous;
-                for(let i = 0; i < index; i++) {
-                    previous = current
-                    current = current.next;
+                let previous; // {4}
+                for (let i = 0; i < index; i++) { // {5}
+                    previous = current; // {6}
+                    current = current.next; // {7}
                 }
-                previous.next = current.next
+                previous.next = current.next; // {8}
             }
-            this.count--;
-            return current.element
+            this.count--; // {9}
+            return current.element;
         }
-        return undefined;
+        return undefined; // {10}
     }
 
     indexOf(element) {
+        if (this.head == null) return undefined;
+        let current = this.head;
+        let index = 0;
+        while (current != null) {
+            if (this.equalsFn(element, current.element)) return index;
+            current = current.next;
+            index++;
+        }
+        return -1;
+    }
 
+    getHead() {
+        return this.head;
+    }
+
+    clear() {
+        this.head = null;
+        this.count = 0;
     }
 
     isEmpty() {
@@ -107,7 +121,16 @@ export default class LinkedList {
     }
 
     toString() {
-
+        if (this.head == null) {
+            return '';
+        }
+        let objString = `${this.head}`;
+        let current = this.head.next;
+        for (let i = 1; i < this.size() && current != null; i++) {
+            objString = `${objString},${current.element}`;
+            current = current.next;
+        }
+        return objString;
     }
 
     printThis() {
@@ -121,10 +144,11 @@ const linkedList = new LinkedList();
 linkedList.push(2);
 linkedList.push(4);
 linkedList.push(1);
+linkedList.insert(3, 1);
 linkedList.printThis();
 // const removedAt1 = linkedList.removeAt(1);
 // const removedAt0 = linkedList.removeAt(0);
-const removedAt0 = linkedList.removeAtV2(0);
+const removedAt0 = linkedList.removeAt(0);
 console.log({ removedAt0 });
 linkedList.printThis();
 const currentItemIndex1 = linkedList.getElementAt(1);
