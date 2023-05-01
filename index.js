@@ -54,15 +54,17 @@ export default class LinkedList {
             this.count = 0;
         } else if (index + 1 > this.size()) {
             return undefined;
+        } else if (index === 0) {
+            this.head = this.head.next;
         } else {
             let currentNode = this.head;
             let counter = 0;
-            let prevNode = null;
+            let prevNode = this.head;
             while (currentNode != null) {
                 console.log({ counter });
                 if (counter === index) {
                     const deletedNode = currentNode;
-                    prevNode.next = currentNode.next;
+                    prevNode.next = currentNode?.next;
                     this.count--;
                     return deletedNode;
                 }
@@ -71,6 +73,25 @@ export default class LinkedList {
                 counter++;
             }
         }
+    }
+
+    removeAtV2(index) {
+        if (index >= 0 && index < this.count) {
+            let current = this.head;
+            if (index === 0) {
+                this.head = current.next;
+            } else {
+                let previous;
+                for(let i = 0; i < index; i++) {
+                    previous = current
+                    current = current.next;
+                }
+                previous.next = current.next
+            }
+            this.count--;
+            return current.element
+        }
+        return undefined;
     }
 
     indexOf(element) {
@@ -101,8 +122,10 @@ linkedList.push(2);
 linkedList.push(4);
 linkedList.push(1);
 linkedList.printThis();
-const removedAt1 = linkedList.removeAt(1);
-console.log({ removed: removedAt1 });
+// const removedAt1 = linkedList.removeAt(1);
+// const removedAt0 = linkedList.removeAt(0);
+const removedAt0 = linkedList.removeAtV2(0);
+console.log({ removedAt0 });
 linkedList.printThis();
 const currentItemIndex1 = linkedList.getElementAt(1);
 const currentItemIndex2 = linkedList.getElementAt(2);
